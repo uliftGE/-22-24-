@@ -6,7 +6,7 @@
 
 # 확인해주실 파일 
 
-src/BookDetailMadal.tsx
+src/BookDetailMadal.tsx <br/>
 src/BookList.jsx
 
 # 연결 서버 
@@ -16,3 +16,5 @@ src/BookList.jsx
 # 코드 리뷰 
 
 강의에 들어갈 코드라고 생각하고 봐주시면 됩니다! 
+https://github.com/uliftGE/ts-2224-tsReactApp
+이 코드에 ts적용하기 전 버전으로 생각해주시면 됩니다.
