@@ -43,7 +43,7 @@ const BookList = () => {
     }
   };
 
-  const toggleRead = (id) => {
+  const toggleBookReadStatus = (id) => {
     const book = books.find((b) => b.id === id);
     if (book) {
       updateReadStatus(id, !book.read);
@@ -66,82 +66,52 @@ const BookList = () => {
     );
   };
 
-  const filterBooks = (status) => {
+  const getFilteredBooks = (status) => {
     if (!status) return books;
     return books.filter((book) => (status === 'Read' ? book.read : !book.read));
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>독서 목록</h1>
-      <div
-        style={{
-          marginBottom: '20px',
-          display: 'flex',
-          gap: '10px',
-          justifyContent: 'center',
-        }}
-      >
-        <button
-          onClick={() => setFilterStatus('Read')}
-          style={{ padding: '10px 20px' }}
-        >
-          읽은 책만 보기
-        </button>
-        <button
-          onClick={() => setFilterStatus('Unread')}
-          style={{ padding: '10px 20px' }}
-        >
-          읽지 않은 책만 보기
-        </button>
-        <button
-          onClick={() => setFilterStatus(null)}
-          style={{ padding: '10px 20px' }}
-        >
-          모든 책 보기
-        </button>
-      </div>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {filterBooks(filterStatus).map((book) => (
-          <li
-            key={book.id}
+    <div style={styles.container}>
+      <h1 style={styles.header}>독서 목록</h1>
+
+      <div style={styles.buttonGroup}>
+        {['Read', 'Unread', null].map((status, index) => (
+          <button
+            key={index}
+            onClick={() => setFilterStatus(status)}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px',
-              padding: '10px',
-              borderBottom: '1px solid #ccc',
-              marginBottom: '10px',
+              ...styles.button,
+              backgroundColor: filterStatus === status ? '#007BFF' : '#f0f0f0',
+              color: filterStatus === status ? '#fff' : '#000',
             }}
           >
+            {status === 'Read'
+              ? '읽은 책만 보기'
+              : status === 'Unread'
+              ? '읽지 않은 책만 보기'
+              : '모든 책 보기'}
+          </button>
+        ))}
+      </div>
+
+      <ul style={styles.list}>
+        {getFilteredBooks(filterStatus).map((book) => (
+          <li key={book.id} style={styles.listItem}>
             <input
               type='checkbox'
               checked={book.read}
-              onChange={() => toggleRead(book.id)}
+              onChange={() => toggleBookReadStatus(book.id)}
               style={{ transform: 'scale(1.5)' }}
             />
-            <img
-              src={book.coverImage}
-              alt='커버이미지'
-              style={{
-                width: '150px',
-                height: '200px',
-                borderRadius: '5px',
-                objectFit: 'cover',
-              }}
-            />
-
+            <img src={book.coverImage} alt='커버 이미지' style={styles.image} />
             <h3 style={{ margin: 0 }}>{book.title}</h3>
-
             <button
               onClick={() => openModal(book)}
               style={{
-                padding: '10px 20px',
+                ...styles.button,
                 backgroundColor: '#007BFF',
                 color: '#fff',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
               }}
             >
               상세 보기
@@ -149,21 +119,9 @@ const BookList = () => {
           </li>
         ))}
       </ul>
+
       {modalOpen && selectedBook && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-        >
+        <div style={styles.modalOverlay}>
           <BookDetailModal
             book={selectedBook}
             onClose={closeModal}
@@ -175,4 +133,42 @@ const BookList = () => {
   );
 };
 
+const styles = {
+  container: { padding: '20px', fontFamily: 'Arial, sans-serif' },
+  header: { textAlign: 'center', marginBottom: '20px' },
+  buttonGroup: {
+    marginBottom: '20px',
+    display: 'flex',
+    gap: '10px',
+    justifyContent: 'center',
+  },
+  button: { padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' },
+  list: { listStyle: 'none', padding: 0 },
+  listItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    padding: '10px',
+    borderBottom: '1px solid #ccc',
+    marginBottom: '10px',
+  },
+  image: {
+    width: '150px',
+    height: '200px',
+    borderRadius: '5px',
+    objectFit: 'cover',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+};
 export default BookList;
