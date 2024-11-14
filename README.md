@@ -10,8 +10,8 @@ src/BookDetailMadal.tsx <br/>
 src/BookList.jsx
 
 # 연결 서버 
+https://github.com/uliftGE/ts-2224-nonTsServer
 
-링크 달기 
 
 # 코드 리뷰 
 
