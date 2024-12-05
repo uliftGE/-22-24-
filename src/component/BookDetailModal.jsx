@@ -1,33 +1,14 @@
 import React, { useState } from 'react';
+import { updateBook } from '../api/index.ts';
 
-const MESSAGES = {
-  saveSuccess: '리뷰가 저장되었습니다.',
-  saveError: '리뷰 저장에 실패했습니다.',
-  saveNetworkError: '리뷰 저장 중 오류가 발생했습니다.',
-};
-
-const BookDetailModal = ({ book, onClose, updateBookReview }) => {
+const BookDetailModal = ({ book, onClose, id, setIsDataChanged }) => {
   const [review, setReview] = useState(book.review || '');
-
-  const handleSaveReview = async (event) => {
+  const saveReview = async (event) => {
     event.preventDefault();
+    updateBook(id, review);
 
-    try {
-      const response = await fetch(`http://localhost:4001/books/${book.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ review }),
-      });
-
-      if (response.ok) {
-        updateBookReview(book.id, review);
-        alert(MESSAGES.saveSuccess);
-      } else {
-        alert(MESSAGES.saveError);
-      }
-    } catch (error) {
-      console.error('Error saving review:', error);
-      alert(MESSAGES.saveNetworkError);
+    if (setIsDataChanged) {
+      setIsDataChanged((prev) => !prev);
     }
   };
 
@@ -36,7 +17,9 @@ const BookDetailModal = ({ book, onClose, updateBookReview }) => {
       <div style={styles.modalContent}>
         <h2 style={styles.title}>{book.title}</h2>
         <p style={styles.description}>{book.description}</p>
-        <p style={styles.genre}>장르: {book.genre}</p>
+        <p style={styles.genre}>
+          <span style={{ fontWeight: 800 }}>장르</span> {book.genre}
+        </p>
         <img src={book.coverImage} alt='커버 이미지' style={styles.img} />
         <textarea
           value={review}
@@ -45,7 +28,7 @@ const BookDetailModal = ({ book, onClose, updateBookReview }) => {
           style={styles.textarea}
         />
         <div style={styles.buttonContainer}>
-          <button onClick={handleSaveReview} style={styles.saveButton}>
+          <button onClick={saveReview} style={styles.saveButton}>
             저장
           </button>
           <button onClick={onClose} style={styles.closeButton}>
@@ -68,17 +51,18 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 20,
     zIndex: 1000,
   },
   modalContent: {
     backgroundColor: 'white',
     borderRadius: '12px',
-    padding: '20px',
+    padding: '26px',
     width: '500px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
   },
   title: {
-    fontSize: '20px',
+    fontSize: '30px',
     fontWeight: 'bold',
     marginBottom: '10px',
   },
@@ -88,7 +72,7 @@ const styles = {
     color: '#555',
   },
   genre: {
-    fontSize: '14px',
+    fontSize: '23px',
     marginBottom: '20px',
     fontStyle: 'italic',
   },
@@ -101,7 +85,7 @@ const styles = {
     height: '80px',
     borderRadius: '8px',
     padding: '10px',
-    marginBottom: '20px',
+    margin: '20px',
     border: '1px solid #ddd',
     fontSize: '14px',
   },
