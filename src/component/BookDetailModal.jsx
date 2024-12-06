@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { updateBook } from '../api/index.ts';
+import { updateBook } from '../api/index.js';
 
-const BookDetailModal = ({ book, onClose, id, setIsDataChanged }) => {
-  const [review, setReview] = useState(book.review || '');
+const BookDetailModal = ({ book, onClose, id, onReviewChanged }) => {
+  const [review, setReview] = useState(book.review ?? '');
   const saveReview = async (event) => {
     event.preventDefault();
-    updateBook(id, review);
-
-    if (setIsDataChanged) {
-      setIsDataChanged((prev) => !prev);
+    try {
+      await updateBook(id, review);
+      if (onReviewChanged) {
+        onReviewChanged((prev) => !prev);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('리뷰를 저장하는 데 실패했습니다. 다시 시도해주세요.');
     }
   };
 

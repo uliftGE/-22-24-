@@ -1,9 +1,4 @@
-const BASE_URL = 'http://localhost:4000/books';
-const MESSAGES = {
-  saveSuccess: '리뷰가 저장되었습니다.',
-  saveError: '리뷰 저장에 실패했습니다.',
-  saveNetworkError: '리뷰 저장 중 오류가 발생했습니다.',
-};
+const BASE_URL = 'http://localhost:4000';
 
 // 서버에서 모든 책 데이터 가져오기
 export const fetchBooks = async () => {
@@ -38,16 +33,14 @@ export const updateBook = async (id, review) => {
       },
       body: JSON.stringify({ review }),
     });
-
-    if (response.ok) {
-      return response.json();
-    } else {
-      console.error('Failed to update read status');
-      alert(MESSAGES.saveError);
+    const data = await response.json();
+    if (!response.ok) {
+      return { error: data.error, time: data.time };
     }
+    return await response.json();
   } catch (error) {
-    console.error('Error updating read status:', error);
-    alert(MESSAGES.saveNetworkError);
+    console.error('Error updating book', error);
+    throw new Error(`Failed to fetch Book ${id}`);
   }
 };
 
@@ -61,16 +54,13 @@ export const addBook = async (title, description, genre, coverImage) => {
       },
       body: JSON.stringify({ title, description, genre, coverImage }),
     });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data.data;
-    } else {
-      console.error('Failed to add book');
-      return undefined;
+    const data = await response.json();
+    if (!response.ok) {
+      return { error: data.error, time: data.time };
     }
+    return await response.json();
   } catch (error) {
     console.error('Error adding book:', error);
-    return undefined;
+    throw new Error(`Failed to add Book`);
   }
 };

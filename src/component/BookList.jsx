@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import BookDetailModal from './BookDetailModal.tsx';
-import { fetchBooks } from '../api/index.ts';
+import BookDetailModal from './BookDetailModal.jsx';
+import { fetchBooks } from '../api/index.js';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -13,9 +13,17 @@ const BookList = () => {
     const fetchAndSetBooks = async () => {
       const data = await fetchBooks();
       if (data) {
-        const readStatus = JSON.parse(
-          localStorage.getItem('readStatus') || '{}'
-        );
+        let readStatus = {};
+        try {
+          readStatus = JSON.parse(localStorage.getItem('readStatus') ?? '{}');
+        } catch (parseError) {
+          console.error(
+            'Failed to parse readStatus from localStorage:',
+            parseError
+          );
+          readStatus = {};
+        }
+
         const updatedBooks = data.map((book) => ({
           ...book,
           read: readStatus[book.id] ?? false,
@@ -38,7 +46,7 @@ const BookList = () => {
 
     setBooks(updatedBooks);
 
-    const readStatus = JSON.parse(localStorage.getItem('readStatus') || '{}');
+    const readStatus = JSON.parse(localStorage.getItem('readStatus') ?? '{}');
     readStatus[id] = !readStatus[id];
     localStorage.setItem('readStatus', JSON.stringify(readStatus));
   };
@@ -121,7 +129,7 @@ const BookList = () => {
             book={selectedBook}
             onClose={closeModal}
             id={selectedBook.id}
-            setIsDataChanged={setIsDataChanged}
+            onReviewChanged={setIsDataChanged}
           />
         </div>
       )}
