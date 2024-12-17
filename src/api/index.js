@@ -37,7 +37,7 @@ export const updateBook = async (id, review) => {
     if (!response.ok) {
       return { error: data.error, time: data.time };
     }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error updating book', error);
     throw new Error(`Failed to fetch Book ${id}`);
@@ -58,7 +58,7 @@ export const addBook = async (title, description, genre, coverImage) => {
     if (!response.ok) {
       return { error: data.error, time: data.time };
     }
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error adding book:', error);
     throw new Error(`Failed to add Book`);
